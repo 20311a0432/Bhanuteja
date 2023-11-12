@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "mgmcdermott.vscode-language-babel",
+        "dsznajder.es7-react-js-snippets",
+        "visualstudioexptteam.vscodeintellicode",
+        "ritwickdey.liveserver",
+        "zhuangtongfa.material-theme",
+        "esbenp.prettier-vscode",
+        "rvest.vs-code-prettier-eslint",
+        "bradlc.vscode-tailwindcss",
+        "oderwat.indent-rainbow"
+    ]
+}
