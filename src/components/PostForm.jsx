@@ -17,7 +17,28 @@ function PostForm({post}) {
     });
 
     const navigate = useNavigate();
-    const userData = useSelector( (state) => state.userData )
+    const userData = useSelector( (state) => state.userData );
+    const submit = async (data) => {
+        const file = data.image[0] ? appwriteService.uploadFile(data.image[0]) : null;
+        if (post) {
+            if (file) {
+                await appwriteService.deleteFile(post.featuredImage);
+            }
+            const updatePost = await appwriteService.updatePost(post.$id,{
+                ...data,
+                featuredImage: file ? file.$id : post.featuredImage
+            })
+            if (updatePost) {
+                navigate(`/post/${updatePost.$id}`)
+            }
+        }  else {
+            if (file) {
+                const fileId = file.$id
+                data.featuredImage = 
+            } 
+        }
+
+    }
     
 
 

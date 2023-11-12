@@ -8,6 +8,9 @@
         "esbenp.prettier-vscode",
         "rvest.vs-code-prettier-eslint",
         "bradlc.vscode-tailwindcss",
-        "oderwat.indent-rainbow"
+        "oderwat.indent-rainbow",
+        "aaron-bond.better-comments",
+        "formulahendry.auto-rename-tag",
+        "dbaeumer.vscode-eslint"
     ]
 }
