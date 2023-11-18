@@ -5,7 +5,7 @@ const Input = forwardRef( ({
     type = "text",
     className = "",
     ...props 
-}) => {
+}, ref) => {
 
     const id = useId();
 
@@ -30,6 +30,6 @@ const Input = forwardRef( ({
 
         </div>
     );
-}, ref )
+})
 
 export default Input

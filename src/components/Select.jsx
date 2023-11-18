@@ -4,7 +4,7 @@ const Select = forwardRef(({
     label,
     className = "",
     ...props
-}) => {
+}, ref) => {
     const id = useId();
 
     return (
@@ -24,6 +24,6 @@ const Select = forwardRef(({
             </select>
         </div>
     );
-}, ref);
+});
 
 export default Select;
