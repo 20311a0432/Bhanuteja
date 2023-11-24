@@ -6,21 +6,22 @@ import { useSelector } from 'react-redux';
 function Home() {
     const [posts, setPosts] = useState([]);
     const authStatus = useSelector((state) => state.auth.status)
-
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         if(authStatus){
              appwriteService.getPosts().then((posts) => {
                 if (posts) {
                     setPosts(posts.documents)
+                    setLoading(false)
                 }
             })
         }
     }, [])
   
     if(authStatus) {
-        if(posts.length === 0) {
+        if(!loading && posts.length === 0) {
             return(
-                <div className="w-full py-8 mt-4 text-center">
+                <div className="w-full py-8 text-center h-screen bg-[#f5f5f7]">
                     <Container>
                         <div className="flex flex-wrap">
                             <div className="p-2 w-full">
@@ -32,9 +33,9 @@ function Home() {
                     </Container>
                 </div>
             )
-        } else {
+        } else if (!loading) {
             return(
-                <div className='w-full py-8 bg-black'>
+                <div className='w-full py-8 bg-[#f5f5f7] h-screen'>
                     <Container>
                         <div className='flex flex-wrap'>
                             {posts.map((post) => (
@@ -46,10 +47,24 @@ function Home() {
                     </Container>
                 </div>
             )
+        } else {
+            return(
+                <div className="w-full py-8 text-center h-screen bg-[#f5f5f7]">
+                    <Container>
+                        <div className="flex flex-wrap">
+                            <div className="p-2 w-full">
+                                <h1 className="text-2xl font-bold hover:text-gray-500">
+                                    Loading...
+                                </h1>
+                            </div>
+                        </div>
+                    </Container>
+                </div>
+            )
         }
     }
     return (
-        <div className="w-full py-8 mt-4 text-center">
+        <div className="w-full py-8 text-center h-screen bg-[#f5f5f7]">
             <Container>
                 <div className="flex flex-wrap">
                     <div className="p-2 w-full">
