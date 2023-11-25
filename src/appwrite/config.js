@@ -9,7 +9,7 @@ export class Service {
 
     constructor() {
         this.client
-            .setEndpoint(conf.appwriteUrl)
+            .setEndpoint(import.meta.env.VITE_APPWRITE_URL)
             .setProject(conf.appwriteProjectId);
 
         this.databases = new Databases(this.client);
