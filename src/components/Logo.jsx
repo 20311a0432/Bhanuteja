@@ -1,8 +1,7 @@
 import React from 'react'
-import logo from "./../../public/Logo.svg"
 function Logo({width = "100px"}) {
   return (
-    <h1>Bloggy</h1>
+    <h1 className='w-[100px]'>Bloggy</h1>
   )
 }
 

@@ -1,5 +1,6 @@
 import conf from "../conf/conf";
 import { Client, Account, ID } from "appwrite";
+import { useSelector } from "react-redux";
 
 export class AuthService {
     client = new Client();
@@ -42,8 +43,8 @@ export class AuthService {
         } catch (error) {
             console.log("appwrite :: AuthService :: getCurrentUser :: error ",error);
         }
-
         return null;
+        
     }
 
     async logout () {
