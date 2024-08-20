@@ -9,6 +9,8 @@ export default function Protected({children, authentication = true}) {
     const authStatus = useSelector(state => state.auth.status)
 
     useEffect(() => {
+
+        console.log("Auth Layout Use Effect is called");
         
         if(authentication && authStatus !== authentication){
             navigate("/login")
@@ -18,5 +20,5 @@ export default function Protected({children, authentication = true}) {
         setLoader(false)
     }, [authStatus, navigate, authentication])
 
-  return loader ? <h1>Loading...</h1> : <>{children}</>
+  return loader ? <div className=' h-screen w-full flex flex-col items-center justify-center bg-[#f5f5f7]'><h1>Loading...</h1></div> : <>{children}</>
 }

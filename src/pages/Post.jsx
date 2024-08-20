@@ -4,32 +4,69 @@ import appwriteService from "../appwrite/config";
 import { Button, Container } from "../components";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
+import { DELETE_POST_URI, GET_POST_BY_ID } from "../appwrite/backendUrls";
 
 export default function Post() {
+    console.log("In Post Component")
     const [post, setPost] = useState(null);
     const { slug } = useParams();
     const navigate = useNavigate();
 
     const userData = useSelector((state) => state.auth.userData);
+    console.log("The userData --> ",userData);
+    
 
-    const isAuthor = post && userData ? post.userId === userData.$id : false;
+    const isAuthor = post && userData ? post.user.email === userData.email : false;
 
     useEffect(() => {
         if (slug) {
-            appwriteService.getPost(slug).then((post) => {
-                if (post) setPost(post);
-                else navigate("/");
-            });
+            fetch(GET_POST_BY_ID + `?id=${slug}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
+            })
+            .then(response => response.json())
+            .then((data) => {
+                if(data.error) navigate("/");
+                else {
+                    console.log("The Post Data in Post Component -->" ,data);
+                    
+                    setPost(data.data)
+                };
+            })
+            .catch((error) => {
+                console.log("Error While fetching the post by id"); 
+            })
+
+
+            // appwriteService.getPost(slug).then((post) => {
+            //     if (post) setPost(post);
+            //     else navigate("/");
+            // });
         } else navigate("/");
     }, [slug, navigate]);
 
-    const deletePost = () => {
-        appwriteService.deletePost(post.$id).then((status) => {
-            if (status) {
-                appwriteService.deleteFile(post.featuredImage);
-                navigate("/");
+    const deletePost = async () => {
+        try {
+            if (post) {
+                const res = await fetch(DELETE_POST_URI + `/${post.id}`, {
+                    method: "DELETE",
+                    credentials: "include"
+                })
+                const response = await res.json();
+                if (!response.error) {
+                    navigate("/")
+                }
             }
-        });
+
+            
+        } catch (error) {
+            console.log("Error while deleting the post");
+            
+        }
+        
     };
 
     return post ? (
@@ -37,14 +74,14 @@ export default function Post() {
             <Container>
                 <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2 bg-white">
                     <img
-                        src={appwriteService.getFilePreview(post.featuredImage)}
+                        src={post.image_url}
                         alt={post.title}
                         className="rounded-xl object-fill h-96"
                     />
 
                     {isAuthor && (
                         <div className="absolute right-6 top-6">
-                            <Link to={`/edit-post/${post.$id}`}>
+                            <Link to={`/edit-post/${post.id}`}>
                                 <Button bgColor="bg-green-500" className="mr-3">
                                     Edit
                                 </Button>

@@ -6,7 +6,7 @@ function AddPost() {
     
   return (
 
-    <div className='py-8 bg-slate-300'>
+    <div className='py-8 bg-[#f4f2ee]'>
         <Container>
             <PostForm />
         </Container>

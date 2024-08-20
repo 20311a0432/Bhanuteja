@@ -2,21 +2,36 @@ import React, {useEffect, useState} from 'react'
 import appwriteService from "../appwrite/config";
 import {Container, PostCard} from '../components'
 import { useSelector } from 'react-redux';
+import { GET_POSTS, GET_USER } from '../appwrite/backendUrls';
 
 function Home() {
     const [posts, setPosts] = useState([]);
     const authStatus = useSelector((state) => state.auth.status)
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        if(authStatus){
-             appwriteService.getPosts().then((posts) => {
-                if (posts) {
-                    setPosts(posts.documents)
-                    setLoading(false)
+        if (authStatus) {
+            fetch(GET_POSTS, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
+            }).then((response) => {
+                return response.json();
+            }).then((res) => {
+    
+                if(!res.error && res?.data?.length) {
+                    setPosts(res.data);
                 }
+            }).catch((err) => {
+                console.log("Error While Loading Posts --> ", err);
+                
+            }).finally(() => {
+                setLoading(false);
             })
         }
-    }, [])
+        
+    }, [authStatus])
   
     if(authStatus) {
         if(!loading && posts.length === 0) {
@@ -39,7 +54,7 @@ function Home() {
                     <Container>
                         <div className='flex flex-wrap'>
                             {posts.map((post) => (
-                                <div key={post.$id} className='p-2 w-1/4'>
+                                <div key={post.id} className='p-2 w-1/4'>
                                     <PostCard {...post} />
                                 </div>
                             ))}

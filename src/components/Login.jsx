@@ -5,6 +5,10 @@ import {Button, Input, Logo} from "./index";
 import authService from '../appwrite/auth';
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
+import { GET_USER, LOGIN_URI } from "../appwrite/backendUrls.js";
+import ButtonLoader from "../components/ButtonLoader.jsx"
+
+
 
 
 function Login() {
@@ -13,21 +17,39 @@ function Login() {
     const dispatch = useDispatch();
     const {register, handleSubmit} = useForm();
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const login = async function(data) {
+        console.log("On Submit clicked");
+        setLoading(true)
+        
         setError("");
         try {
-            const session = await authService.login(data);
-            if (session) {
-                const userData = await authService.getCurrentUser();
-                if (userData) {
-                    dispatch(storeLogin(userData));
-                }
+
+            const response = await fetch(LOGIN_URI, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
+            })
+
+            const responseBody = await response.json();
+            
+            
+            if (responseBody?.error) {
+                setError(responseBody.message);
+            } else {
+                console.log("In loggong");
+                
+                dispatch(storeLogin(responseBody.data.user));
                 navigate("/");
             }
         } catch (error) {
             setError(error.message);
         }
+        setLoading(false);
 
     }
 
@@ -35,7 +57,7 @@ function Login() {
 
 
     return (
-        <div className='w-full flex items-center justify-center bg-[#f5f5f7] h-screen'>
+        <div className='w-full flex flex-col items-center justify-center bg-[#f5f5f7] h-screen'>
             <div className='mx-auto w-full max-w-lg rounded-xl p-10 bg-white shadow-2xl'>
                 <div className='mb-2 flex justify-center'>
                     <span className='inline-block w-full max-w-[100px]'>
@@ -74,7 +96,7 @@ function Login() {
                             required: true
                         })}
                         />
-                        <Button type="submit" className="w-full">Sign In</Button>
+                        <Button type="submit" className="w-full">{!loading ? "Sign In" : <ButtonLoader /> }</Button>
                     </div>
                 </form>
             </div>

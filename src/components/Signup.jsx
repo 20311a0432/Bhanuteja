@@ -4,30 +4,59 @@ import { Link, useNavigate } from 'react-router-dom';
 import {Button, Input, Logo} from "./index";
 import { useForm } from 'react-hook-form';
 import {login as storeLogin} from "./../store/authSlice";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import ButtonLoader from "./ButtonLoader.jsx";
+import {SIGN_UP_URI} from "../appwrite/backendUrls.js";
 
 function Signup() {
 
     const navigate = useNavigate();
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const {register, handleSubmit} = useForm();
 
     const signup = async (data) => {
         setError("");
+        setLoading(true);
         try {
-            const userData = await authService.createAccount(data);
-            if (userData) {
-                const currentUser = authService.getCurrentUser();
+
+            console.log(data)
+
+            const res = await fetch(SIGN_UP_URI, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data),
+                credentials: "include"
+            })
+
+            const response = await res.json();
+
+            if (!response.error) {
+                const currentUser = response.data.user;
+                console.log("The currentUser --> ", currentUser);
+                
                 if (currentUser) {
                     dispatch(storeLogin(currentUser));
                     navigate("/");
                 }
             }
-            
+
+            // const userData = await authService.createAccount(data);
+            // if (userData) {
+            //     const currentUser = authService.getCurrentUser();
+            //     if (currentUser) {
+            //         dispatch(storeLogin(currentUser));
+            //         navigate("/");
+            //     }
+            // }
 
         } catch (error) {
             setError(error.message);
+        } finally {
+            setLoading(false);
         }
         
 
@@ -83,7 +112,7 @@ function Signup() {
                             required: true,})}
                             />
                         <Button type="submit" className="w-full">
-                            Create Account
+                            {loading ? <ButtonLoader /> : "Create Account"}
                         </Button>
                     </div>
                 </form>
